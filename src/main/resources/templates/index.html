@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/normalize.css}" />
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/htmleaf-demo.css}">
+    <link th:href="@{/css/file-explore.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="htmleaf-container">
+    <header class="htmleaf-header">
+        <h1>File Manager</h1>
+        <div class="htmleaf-links">
+           <form action="/update" method="post">
+               <input type="text" th:value="${file.path}" name="dir"/>
+               <button type="submit">update</button>
+           </form>
+        </div>
+    </header>
+    <div class="container">
+        <h1>文件列表</h1>
+       <ul class="file-tree">
+            <li>
+
+                <a href="#" id="h0_0" th:attr="data=${file.path}">+  [[${file.path}]]</a>
+                <ul>
+
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</div>
+
+<script src="http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>
+<script>window.jQuery || document.write('<script th:src="@{/js/jquery-1.11.0.min.js}"><\/script>')</script>
+<script th:src="@{/js/file-explore.js}"></script>
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $(".file-tree").filetree();
+    });
+    $(".file-tree li").on("click","a",function(){
+        var a=$(this).attr("data");
+
+        //console.log(a);
+        if($(this).attr("first")=="true"||$(this).attr("first")==undefined){
+            $(this).attr("first",false);
+            submit(a,0,this);
+        }
+
+    })
+    function submit(path,id,obj){
+      $.ajax({
+          //请求方式
+          type : "get",
+          //请求的媒体类型
+          headers : {
+              'Content-Type' : 'application/x-www-form-urlencoded;charset=UTF-8'
+          },
+          dataType : "json",
+          //请求地址
+          url : "/open",
+          //数据，json字符串
+          data : {
+              path:path,
+              parenid:id
+          },
+          //请求成功
+          success : function(list) {
+              //console.log(JSON.stringify(list));
+              //console.log(obj)
+              app(list,obj);
+          },
+          //请求失败，包含具体的错误信息
+          error : function(e){
+              console.log(e.status);
+              console.log(e.responseText);
+          }
+      })
+    }
+
+    function app(data,obj){
+        for (i=0;i<data.length;i++){
+            var d=data[i];
+            var id=d.id;
+            var isD=d.direc;
+            var name=d.name;
+            var p=d.parentid;
+            var s=p+"_"+id;
+            var path=d.path;
+            var sufix=d.suffix;
+            var li;
+            if(isD==true){
+                name="+   "+name;
+            }
+            if (sufix=="mp4"||sufix=="rmvb"||sufix=="ts"||sufix=="flv"){
+                li="<li class='folder-root closed'><a data='"+path+"' id='h"+s+"' href='/player?path="+name+"'>"+name+"</a><ul></ul></li>"
+            }else {
+                li="<li class='folder-root closed'><a data='"+path+"' id='h"+s+"' href='#'>"+name+"</a><ul></ul></li>"
+            }
+            $(obj).next().append(li);
+            //console.log(isD);
+        }
+
+    }
+
+
+</script>
+</body>
+</html>

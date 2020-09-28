@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui">
+    <meta name="referrer" content="no-referrer">
+    <title>xgplayer</title>
+    <style type="text/css">
+        html, body {width:100%;height:100%;margin:auto;overflow: hidden;}
+    </style>
+</head>
+<body>
+<div id="mse"></div>
+<script src="//cdn.jsdelivr.net/npm/xgplayer@1.1.4/browser/index.js" charset="utf-8"></script>
+<script th:inline="javascript">
+    let player = new Player({
+        "id": "mse",
+        "url": [[${path}]],
+        "playsinline": true,
+        "whitelist": [
+            ""
+        ]
+    });
+
+</script>
+</body>
+</html>
