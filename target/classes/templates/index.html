@@ -40,6 +40,7 @@
 <script>window.jQuery || document.write('<script th:src="@{/js/jquery-1.11.0.min.js}"><\/script>')</script>
 <script th:src="@{/js/file-explore.js}"></script>
 <script th:inline="javascript">
+    var dir=[[${file.path}]];
     $(document).ready(function() {
         $(".file-tree").filetree();
     });
@@ -84,7 +85,9 @@
     }
 
     function app(data,obj){
+
         for (i=0;i<data.length;i++){
+
             var d=data[i];
             var id=d.id;
             var isD=d.direc;
@@ -98,7 +101,9 @@
                 name="+   "+name;
             }
             if (sufix=="mp4"||sufix=="rmvb"||sufix=="ts"||sufix=="flv"){
-                li="<li class='folder-root closed'><a data='"+path+"' id='h"+s+"' href='/player?path="+name+"'>"+name+"</a><ul></ul></li>"
+                var k=path.substring(dir.length);
+                //console.log(k);
+                li="<li class='folder-root closed'><a data='"+path+"' id='h"+s+"' href='/player?path="+k+"'>"+name+"</a><ul></ul></li>"
             }else {
                 li="<li class='folder-root closed'><a data='"+path+"' id='h"+s+"' href='#'>"+name+"</a><ul></ul></li>"
             }
